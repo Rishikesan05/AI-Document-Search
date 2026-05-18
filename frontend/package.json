@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
-  "description": "Frontend for the AI chatbot based on the book Learning LangChain",
+  "description": "Frontend for the AI Document Search chatbot",
   "private": true,
   "scripts": {
     "dev": "next dev",

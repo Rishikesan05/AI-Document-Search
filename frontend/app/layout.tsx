@@ -6,8 +6,8 @@ import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
 export const metadata: Metadata = {
-  title: "Learning LangChain Book Chatbot Demo",
-  description: "A chatbot demo based on Learning LangChain (O'Reilly)",
+  title: "AI Document Search - Chat with your PDFs",
+  description: "An intelligent RAG chatbot for PDF document search using LLM and semantic search",
 }
 
 export default function RootLayout({

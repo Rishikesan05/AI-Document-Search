@@ -1,9 +1,9 @@
 {
-    "name": "ai-pdf-chatbot-langchain",
-    "description": "AI PDF chatbot template based on the book Learning LangChain (O'Reilly)",
+    "name": "ai-document-search",
+    "description": "AI Document Search - Chat with PDF documents using LLM and semantic search",
     "private": true,
     "version": "0.0.1",
-    "author": "Mayo Oshin",
+    "author": "Rishikesan05",
     "license": "MIT",
     "workspaces": [
       "backend",
