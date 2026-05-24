@@ -1,4 +1,4 @@
-# AI Document Search — Conversational PDF RAG Assistant
+# AI Document Search - Conversational PDF RAG Assistant
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://github.com/Rishikesan05/AI-Document-Search)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
