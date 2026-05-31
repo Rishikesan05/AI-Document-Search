@@ -1,6 +1,6 @@
 # AI Document Search - Conversational PDF RAG Assistant
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://github.com/Rishikesan05/AI-Document-Search)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://aidoc-rishiware.streamlit.app/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![LangChain](https://img.shields.io/badge/Orchestration-LangChain-green)](https://python.langchain.com/)
 [![FAISS](https://img.shields.io/badge/Vector%20DB-FAISS%20Index-orange)](https://github.com/facebookresearch/faiss)
@@ -135,7 +135,7 @@ Get instant insights without typing a single word:
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/Rishikesan05/AI-Document-Search.git
+git clone https://aidoc-rishiware.streamlit.app/.git
 cd AI-Document-Search
 ```
 
