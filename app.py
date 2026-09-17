@@ -2,12 +2,12 @@ import os
 import streamlit as st
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from langchain_community.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from dotenv import load_dotenv
 
-# Load environment variables (OPENAI_API_KEY)
+# Load environment variables (GOOGLE_API_KEY)
 load_dotenv()
 
 # Streamlit App Configuration
@@ -45,8 +45,8 @@ def process_pdf(file):
     )
     chunks = text_splitter.split_text(text)
     
-    # 3. Create FAISS Vector Store using OpenAI Embeddings
-    embeddings = OpenAIEmbeddings()
+    # 3. Create FAISS Vector Store using Google Embeddings
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
     vector_store = FAISS.from_texts(chunks, embeddings)
     return vector_store
 
@@ -75,8 +75,8 @@ if pdf_file:
                 # Retrieve relevant chunks from FAISS
                 docs = vector_store.similarity_search(user_query, k=3)
                 
-                # Load QA Chain with GPT model
-                llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
+                # Load QA Chain with Gemini model
+                llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.3)
                 chain = load_qa_chain(llm, chain_type="stuff")
                 
                 # Generate Answer

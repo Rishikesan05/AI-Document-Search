@@ -8,7 +8,7 @@ This project is built using a simple, unified Python stack:
 - **Frontend / UI**: [Streamlit](https://streamlit.io/)
 - **Document Processing**: `PyPDF2` and `LangChain` text splitters
 - **Vector Database**: [FAISS](https://github.com/facebookresearch/faiss) (runs locally, no cloud DB required)
-- **AI Models**: OpenAI (GPT-3.5-turbo and text-embedding-ada-002)
+- **AI Models**: Google Gemini (gemini-1.5-flash and embedding-001)
 
 ## Features
 - 📄 Upload any PDF document
@@ -20,7 +20,7 @@ This project is built using a simple, unified Python stack:
 
 ### 1. Prerequisites
 - Python 3.9+
-- An OpenAI API Key
+- A Free Google Gemini API Key
 
 ### 2. Installation
 Clone the repository and install the dependencies:
@@ -31,9 +31,9 @@ pip install -r requirements.txt
 ```
 
 ### 3. Environment Variables
-Rename `.env.example` to `.env` and add your OpenAI API key:
+Rename `.env.example` to `.env` and add your Google API key:
 ```env
-OPENAI_API_KEY=your_openai_api_key_here
+GOOGLE_API_KEY=your_google_api_key_here
 ```
 
 ### 4. Run the Application
