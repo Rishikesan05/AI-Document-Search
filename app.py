@@ -46,7 +46,7 @@ def process_pdf(file):
     chunks = text_splitter.split_text(text)
     
     # 3. Create FAISS Vector Store using Google Embeddings
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
     vector_store = FAISS.from_texts(chunks, embeddings)
     return vector_store
 
