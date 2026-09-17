@@ -123,7 +123,3 @@ Access the app at `http://localhost:3000`
 │   └── styles/                   # Tailwind styles
 └── package.json
 ```
-
-## License
-
-MIT
