@@ -235,13 +235,14 @@ st.markdown("""
     }
 
     .hero-title {
-        font-size: clamp(28px, 8vw, 36px);
+        font-size: clamp(22px, 8vw, 36px);
         font-weight: 700;
-        line-height: 1.2;
+        line-height: 1.3;
         color: var(--text);
         margin: 0 0 20px 0;
         letter-spacing: -0.5px;
-        word-wrap: break-word;
+        word-break: keep-all;
+        overflow-wrap: normal;
     }
 
     .hero-desc {
