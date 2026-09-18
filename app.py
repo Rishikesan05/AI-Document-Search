@@ -54,7 +54,19 @@ st.markdown("""
     #MainMenu, header, footer, [data-testid="stHeader"], [data-testid="stFooter"] { 
         display: none !important; 
     }
-    .stDeployButton { display: none; }
+    
+    /* Hide Streamlit Cloud Deploy, Viewer, and Creator Badges */
+    .stDeployButton,
+    #viewerBadge_container_1,
+    [data-testid="viewerBadge"],
+    [data-testid="creatorBadge"],
+    [data-testid="stDecoration"],
+    [data-testid="stToolbar"],
+    .viewerBadge_container__1QSob,
+    .viewerBadge_link__1S137,
+    .viewerBadge_text__1JaDK {
+        display: none !important;
+    }
     
     /* Hide default Streamlit header anchor links (the 🔗 icon) */
     a.header-anchor,
