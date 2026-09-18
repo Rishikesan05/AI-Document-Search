@@ -47,7 +47,7 @@ st.markdown("""
     
     /* Reduce default Streamlit padding to prevent unwanted vertical scrolling and massive side margins on mobile */
     [data-testid="stMainBlockContainer"] {
-        padding: 2rem 1rem !important;
+        padding: 1rem 1rem 2rem 1rem !important;
         max-width: 100% !important;
     }
 
@@ -220,7 +220,7 @@ st.markdown("""
     /* Hero Section */
     .hero {
         text-align: center;
-        padding: 96px 24px 48px 24px;
+        padding: 32px 24px 48px 24px;
         max-width: 640px;
         margin: 0 auto;
     }
@@ -405,7 +405,7 @@ st.markdown("""
         }
         
         .hero {
-            padding: 48px 16px 24px 16px;
+            padding: 16px 16px 24px 16px;
         }
     }
     
