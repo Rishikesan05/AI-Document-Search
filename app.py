@@ -46,7 +46,7 @@ def process_pdf(file):
     chunks = text_splitter.split_text(text)
     
     # 3. Create FAISS Vector Store using Google Embeddings
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004")
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-2")
     vector_store = FAISS.from_texts(chunks, embeddings)
     return vector_store
 
@@ -76,7 +76,7 @@ if pdf_file:
                 docs = vector_store.similarity_search(user_query, k=3)
                 
                 # Load QA Chain with Gemini model
-                llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.3)
+                llm = ChatGoogleGenerativeAI(model="models/gemini-3.5-flash", temperature=0.3)
                 chain = load_qa_chain(llm, chain_type="stuff")
                 
                 # Generate Answer
