@@ -295,27 +295,6 @@ st.markdown("""
         margin: 0;
     }
 
-    /* Tech Stack Pills */
-    .stack {
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-        flex-wrap: wrap;
-        max-width: 640px;
-        margin: 40px auto 0 auto;
-        padding: 0 24px;
-    }
-
-    .pill {
-        display: inline-block;
-        background: var(--accent-soft);
-        color: var(--text);
-        font-size: 11px;
-        font-weight: 500;
-        padding: 5px 14px;
-        border-radius: 50px;
-    }
-
     /* Sidebar Sections */
     .sb-brand {
         font-size: 16px;
@@ -427,10 +406,6 @@ st.markdown("""
         
         .hero {
             padding: 48px 16px 24px 16px;
-        }
-        
-        .stack {
-            padding: 0 16px;
         }
     }
     
@@ -619,16 +594,6 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="stack">
-        <span class="pill">Python</span>
-        <span class="pill">Streamlit</span>
-        <span class="pill">LangChain</span>
-        <span class="pill">FAISS</span>
-        <span class="pill">Google Gemini</span>
-        <span class="pill">PyPDF2</span>
-    </div>
-    """, unsafe_allow_html=True)
 
 st.markdown("""
 <div class="ft">
