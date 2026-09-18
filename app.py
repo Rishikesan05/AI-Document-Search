@@ -6,334 +6,411 @@ from langchain_community.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# Page Config
 st.set_page_config(
     page_title="AI Document Search",
-    page_icon="🔍",
+    page_icon="📄",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# ─────────────────────────────────────────────
-# Custom CSS - Premium Dark Theme
-# ─────────────────────────────────────────────
+# ── CSS Design System (rishiware.com style) ──
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;500;600;700&display=swap');
 
-    /* ── Global ── */
-    * { font-family: 'Inter', sans-serif !important; }
-
-    .stApp {
-        background: linear-gradient(135deg, #0F0F1A 0%, #1A1A2E 50%, #16213E 100%);
+    :root {
+        --bg: #ffffff;
+        --bg2: #f8f8f8;
+        --card: #ffffff;
+        --text: #1a1a1a;
+        --text2: #555555;
+        --text3: #888888;
+        --border: #e0e0e0;
+        --accent: #1a1a1a;
+        --accent-soft: rgba(0, 0, 0, 0.06);
+        --radius: 16px;
+        --radius-lg: 24px;
     }
 
-    /* ── Hide Streamlit Defaults ── */
+    * {
+        font-family: 'Roboto Mono', monospace !important;
+    }
+
+    html, body, .stApp {
+        background-color: var(--bg) !important;
+        color: var(--text) !important;
+        overflow-x: hidden !important;
+    }
+
     #MainMenu, footer, header { visibility: hidden; }
     .stDeployButton { display: none; }
 
-    /* ── Sidebar ── */
+    /* Sidebar */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #1A1A2E 0%, #16213E 100%) !important;
-        border-right: 1px solid rgba(124, 58, 237, 0.2);
+        background-color: var(--bg2) !important;
+        border-right: 0.8px solid var(--border) !important;
     }
 
-    section[data-testid="stSidebar"] .stMarkdown h1,
-    section[data-testid="stSidebar"] .stMarkdown h2,
-    section[data-testid="stSidebar"] .stMarkdown h3 {
-        background: linear-gradient(135deg, #7C3AED, #A855F7);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-weight: 700;
+    section[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] p {
+        color: var(--text2) !important;
+        font-size: 13px;
     }
 
-    /* ── File Uploader ── */
+    /* File Uploader */
     section[data-testid="stFileUploader"] {
-        border: 2px dashed rgba(124, 58, 237, 0.4) !important;
-        border-radius: 16px !important;
-        padding: 20px !important;
-        background: rgba(124, 58, 237, 0.05) !important;
-        transition: all 0.3s ease;
+        border: 1px dashed var(--border) !important;
+        border-radius: var(--radius) !important;
+        padding: 24px 16px !important;
+        background: var(--bg) !important;
+        transition: border-color 0.2s ease;
     }
 
     section[data-testid="stFileUploader"]:hover {
-        border-color: rgba(124, 58, 237, 0.8) !important;
-        background: rgba(124, 58, 237, 0.1) !important;
+        border-color: var(--accent) !important;
     }
 
-    /* ── Chat Messages ── */
+    /* Chat Messages */
     .stChatMessage[data-testid="stChatMessage"] {
-        border-radius: 16px !important;
-        padding: 16px 20px !important;
+        border-radius: var(--radius) !important;
+        padding: 20px 24px !important;
         margin-bottom: 12px !important;
-        border: 1px solid rgba(124, 58, 237, 0.1) !important;
-        backdrop-filter: blur(10px);
-    }
-
-    /* User message */
-    .stChatMessage[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
-        background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(168, 85, 247, 0.08)) !important;
-        border: 1px solid rgba(124, 58, 237, 0.25) !important;
-    }
-
-    /* Assistant message */
-    .stChatMessage[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
-        background: rgba(30, 30, 60, 0.6) !important;
-        border: 1px solid rgba(100, 100, 180, 0.15) !important;
-    }
-
-    /* ── Chat Input ── */
-    .stChatInput > div {
-        border-radius: 16px !important;
-        border: 1px solid rgba(124, 58, 237, 0.3) !important;
-        background: rgba(26, 26, 46, 0.8) !important;
-        transition: all 0.3s ease;
-    }
-
-    .stChatInput > div:focus-within {
-        border-color: #7C3AED !important;
-        box-shadow: 0 0 20px rgba(124, 58, 237, 0.2) !important;
-    }
-
-    /* ── Buttons ── */
-    .stButton > button {
-        background: linear-gradient(135deg, #7C3AED, #A855F7) !important;
-        color: white !important;
-        border: none !important;
-        border-radius: 12px !important;
-        padding: 10px 24px !important;
-        font-weight: 600 !important;
-        transition: all 0.3s ease !important;
-    }
-
-    .stButton > button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4) !important;
-    }
-
-    /* ── Success / Info Alerts ── */
-    .stAlert {
-        border-radius: 12px !important;
-        border: none !important;
-    }
-
-    div[data-testid="stAlert"][data-baseweb="notification"] {
-        border-radius: 12px !important;
-    }
-
-    /* ── Spinner ── */
-    .stSpinner > div > div {
-        border-top-color: #7C3AED !important;
-    }
-
-    /* ── Scrollbar ── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #0F0F1A; }
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #7C3AED, #A855F7);
-        border-radius: 10px;
-    }
-
-    /* ── Hero Section ── */
-    .hero-container {
-        text-align: center;
-        padding: 60px 20px 40px 20px;
-    }
-
-    .hero-title {
-        font-size: 2.8rem;
-        font-weight: 700;
-        background: linear-gradient(135deg, #7C3AED, #A855F7, #C084FC);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 12px;
-        letter-spacing: -0.5px;
-    }
-
-    .hero-subtitle {
-        font-size: 1.1rem;
-        color: #94A3B8;
-        font-weight: 300;
-        max-width: 600px;
-        margin: 0 auto;
+        font-size: 13px;
         line-height: 1.6;
     }
 
-    .hero-divider {
-        width: 80px;
-        height: 3px;
-        background: linear-gradient(90deg, #7C3AED, #A855F7);
-        margin: 24px auto;
-        border-radius: 2px;
+    .stChatMessage[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
+        background: var(--bg2) !important;
+        border: 0.8px solid var(--border) !important;
     }
 
-    /* ── Feature Cards ── */
-    .features-grid {
+    .stChatMessage[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+        background: var(--bg) !important;
+        border: 0.8px solid var(--border) !important;
+    }
+
+    /* Chat Input */
+    .stChatInput > div {
+        border-radius: var(--radius) !important;
+        border: 0.8px solid var(--border) !important;
+        background: var(--bg) !important;
+        transition: border-color 0.2s ease;
+    }
+
+    .stChatInput > div:focus-within {
+        border-color: var(--accent) !important;
+        box-shadow: none !important;
+    }
+
+    .stChatInput textarea {
+        color: var(--text) !important;
+        font-size: 13px !important;
+    }
+
+    .stChatInput textarea::placeholder {
+        color: var(--text3) !important;
+    }
+
+    /* Buttons */
+    .stButton > button {
+        background-color: var(--accent) !important;
+        color: #ffffff !important;
+        border: none !important;
+        border-radius: 50px !important;
+        padding: 10px 24px !important;
+        font-weight: 500 !important;
+        font-size: 13px !important;
+        transition: opacity 0.15s ease;
+        cursor: pointer;
+    }
+
+    .stButton > button:hover {
+        opacity: 0.85 !important;
+    }
+
+    /* Alerts */
+    .stAlert > div {
+        border-radius: var(--radius) !important;
+        font-size: 13px;
+    }
+
+    /* Spinner */
+    .stSpinner > div > div {
+        border-top-color: var(--accent) !important;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* Hero Section */
+    .hero {
+        text-align: center;
+        padding: 96px 24px 48px 24px;
+        max-width: 640px;
+        margin: 0 auto;
+    }
+
+    .hero-kicker {
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--text2);
+        margin: 0 0 16px 0;
+    }
+
+    .hero-title {
+        font-size: 36px;
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--text);
+        margin: 0 0 20px 0;
+        letter-spacing: -0.5px;
+    }
+
+    .hero-desc {
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.7;
+        color: var(--text2);
+        margin: 0;
+    }
+
+    /* Feature Cards Grid */
+    .features {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 16px;
-        padding: 0 20px;
-        max-width: 800px;
-        margin: 0 auto 40px auto;
+        max-width: 720px;
+        margin: 48px auto 0 auto;
+        padding: 0 24px;
     }
 
-    .feature-card {
-        background: rgba(26, 26, 46, 0.6);
-        border: 1px solid rgba(124, 58, 237, 0.15);
-        border-radius: 16px;
-        padding: 24px 16px;
-        text-align: center;
-        transition: all 0.3s ease;
+    .feat {
+        background: var(--card);
+        border: 0.8px solid var(--border);
+        border-radius: var(--radius);
+        padding: 24px 20px;
     }
 
-    .feature-card:hover {
-        border-color: rgba(124, 58, 237, 0.4);
-        transform: translateY(-4px);
-        box-shadow: 0 8px 30px rgba(124, 58, 237, 0.15);
+    .feat-icon {
+        display: inline-block;
+        background: var(--accent-soft);
+        border-radius: 50px;
+        padding: 6px 12px;
+        font-size: 14px;
+        margin-bottom: 14px;
     }
 
-    .feature-icon {
-        font-size: 2rem;
-        margin-bottom: 10px;
-    }
-
-    .feature-title {
-        font-size: 0.85rem;
+    .feat-title {
+        font-size: 14px;
         font-weight: 600;
-        color: #C084FC;
-        margin-bottom: 6px;
+        color: var(--text);
+        margin: 0 0 6px 0;
     }
 
-    .feature-desc {
-        font-size: 0.75rem;
-        color: #64748B;
-        line-height: 1.4;
+    .feat-desc {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--text2);
+        line-height: 1.6;
+        margin: 0;
     }
 
-    /* ── Sidebar Info Card ── */
-    .sidebar-info {
-        background: rgba(124, 58, 237, 0.08);
-        border: 1px solid rgba(124, 58, 237, 0.2);
-        border-radius: 12px;
-        padding: 16px;
+    /* Tech Stack Pills */
+    .stack {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        max-width: 640px;
+        margin: 40px auto 0 auto;
+        padding: 0 24px;
+    }
+
+    .pill {
+        display: inline-block;
+        background: var(--accent-soft);
+        color: var(--text);
+        font-size: 11px;
+        font-weight: 500;
+        padding: 5px 14px;
+        border-radius: 50px;
+    }
+
+    /* Sidebar Sections */
+    .sb-brand {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--text);
+        margin: 0 0 4px 0;
+    }
+
+    .sb-sub {
+        font-size: 11px;
+        font-weight: 400;
+        color: var(--text3);
+        margin: 0 0 24px 0;
+    }
+
+    .sb-section {
+        background: var(--bg);
+        border: 0.8px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px;
         margin-top: 20px;
     }
 
-    .sidebar-info-title {
-        font-size: 0.8rem;
+    .sb-section-title {
+        font-size: 11px;
         font-weight: 600;
-        color: #A855F7;
-        margin-bottom: 8px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--text2);
+        margin: 0 0 12px 0;
     }
 
-    .sidebar-info-text {
-        font-size: 0.75rem;
-        color: #94A3B8;
-        line-height: 1.5;
+    .sb-step {
+        font-size: 12px;
+        color: var(--text2);
+        line-height: 2;
+        margin: 0;
     }
 
-    /* ── Footer ── */
-    .app-footer {
+    .sb-step strong {
+        color: var(--text);
+    }
+
+    /* Footer */
+    .ft {
         text-align: center;
-        padding: 30px 0;
-        color: #475569;
-        font-size: 0.8rem;
+        padding: 48px 0 24px 0;
+        font-size: 12px;
+        color: var(--text3);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
 
-    .app-footer a {
-        color: #7C3AED;
+    .ft-links {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-top: 8px;
+    }
+
+    .ft a {
+        color: var(--text);
         text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .ft a:hover { 
+        color: var(--text2);
+        text-decoration: underline; 
+    }
+
+    /* Sidebar footer */
+    .sb-footer {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+    }
+
+    .sb-footer-pill {
+        font-size: 10px;
+        font-weight: 500;
+        color: var(--text3);
+        background: var(--accent-soft);
+        padding: 3px 10px;
+        border-radius: 50px;
     }
 </style>
 """, unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────
-# Sidebar
-# ─────────────────────────────────────────────
+# ── Sidebar ──
 with st.sidebar:
-    st.markdown("### 📂 Upload Document")
+    st.markdown("""
+    <p class="sb-brand">📄 Document Search</p>
+    <p class="sb-sub">AI-powered PDF analysis tool</p>
+    """, unsafe_allow_html=True)
+
     pdf_file = st.file_uploader(
-        "Drag & drop your PDF here",
+        "Upload a PDF document",
         type=["pdf"],
         label_visibility="collapsed"
     )
 
     if pdf_file is not None:
-        st.success(f"✅ **{pdf_file.name}** uploaded!")
         file_size = round(pdf_file.size / 1024, 1)
-        st.caption(f"📄 Size: {file_size} KB")
+        st.success(f"**{pdf_file.name}** ready ({file_size} KB)")
 
     st.markdown("""
-    <div class="sidebar-info">
-        <div class="sidebar-info-title">💡 How it works</div>
-        <div class="sidebar-info-text">
-            1. Upload any PDF document<br>
-            2. AI processes & indexes the content<br>
-            3. Ask questions in natural language<br>
-            4. Get accurate, context-aware answers
-        </div>
+    <div class="sb-section">
+        <p class="sb-section-title">How it works</p>
+        <p class="sb-step">
+            <strong>1.</strong> Upload any PDF document<br>
+            <strong>2.</strong> AI reads and indexes every page<br>
+            <strong>3.</strong> Ask questions in plain English<br>
+            <strong>4.</strong> Get answers from your document
+        </p>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("---")
     st.markdown("""
-    <div style="text-align:center; padding: 8px 0;">
-        <span style="color: #64748B; font-size: 0.75rem;">
-            Built with Streamlit • LangChain • Gemini
-        </span>
+    <div class="sb-footer">
+        <span class="sb-footer-pill">Streamlit</span>
+        <span class="sb-footer-pill">LangChain</span>
+        <span class="sb-footer-pill">Gemini</span>
+        <span class="sb-footer-pill">FAISS</span>
     </div>
     """, unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────
-# PDF Processing
-# ─────────────────────────────────────────────
+# ── PDF Processing ──
 @st.cache_resource(show_spinner=False)
 def process_pdf(file):
-    """Reads PDF, extracts text, chunks it, and creates FAISS Vector Store."""
-    pdf_reader = PdfReader(file)
+    """Read PDF, chunk text, build FAISS vector store."""
+    reader = PdfReader(file)
     text = ""
-    for page in pdf_reader.pages:
-        if page.extract_text():
-            text += page.extract_text()
+    for page in reader.pages:
+        extracted = page.extract_text()
+        if extracted:
+            text += extracted
 
-    text_splitter = RecursiveCharacterTextSplitter(
+    splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=200,
         length_function=len
     )
-    chunks = text_splitter.split_text(text)
+    chunks = splitter.split_text(text)
 
     embeddings = GoogleGenerativeAIEmbeddings(model="models/gemini-embedding-2")
-    vector_store = FAISS.from_texts(chunks, embeddings)
-    return vector_store
+    return FAISS.from_texts(chunks, embeddings)
 
 
-# ─────────────────────────────────────────────
-# Initialize Chat History
-# ─────────────────────────────────────────────
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 
-# ─────────────────────────────────────────────
-# Main Content
-# ─────────────────────────────────────────────
+# ── Main ──
 if pdf_file:
-    with st.spinner("🔄 Processing document — extracting, chunking & embedding..."):
+    with st.spinner("Processing document..."):
         vector_store = process_pdf(pdf_file)
 
-    # Display chat history
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # Chat input
-    user_query = st.chat_input("💬 Ask anything about your document...")
+    user_query = st.chat_input("Ask a question about your document...")
 
     if user_query:
         st.session_state.messages.append({"role": "user", "content": user_query})
@@ -341,51 +418,76 @@ if pdf_file:
             st.markdown(user_query)
 
         with st.chat_message("assistant"):
-            with st.spinner("🔍 Searching document..."):
+            with st.spinner("Searching..."):
                 docs = vector_store.similarity_search(user_query, k=3)
-                llm = ChatGoogleGenerativeAI(model="models/gemini-3.5-flash", temperature=0.3)
+                llm = ChatGoogleGenerativeAI(
+                    model="models/gemini-3.5-flash",
+                    temperature=0.3
+                )
                 chain = load_qa_chain(llm, chain_type="stuff")
-                response = chain.run(input_documents=docs, question=user_query)
-                st.markdown(response)
+                response = chain.invoke(
+                    {"input_documents": docs, "question": user_query}
+                )
+                st.markdown(response["output_text"])
 
-        st.session_state.messages.append({"role": "assistant", "content": response})
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": response["output_text"]
+        })
 
 else:
-    # ── Landing Page ──
     st.markdown("""
-    <div class="hero-container">
-        <div class="hero-title">AI Document Search</div>
-        <div class="hero-divider"></div>
-        <div class="hero-subtitle">
-            Upload any PDF and have intelligent conversations with your documents.
-            Powered by RAG (Retrieval-Augmented Generation) and Google Gemini AI.
+    <div class="hero">
+        <p class="hero-kicker">AI Powered</p>
+        <h1 class="hero-title">Search your documents<br>with intelligence</h1>
+        <p class="hero-desc">
+            Upload a PDF and ask questions in plain language.
+            Powered by retrieval-augmented generation.
+            Answers are grounded entirely in your document.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("""
+    <div class="features">
+        <div class="feat">
+            <span class="feat-icon">📄</span>
+            <p class="feat-title">Upload</p>
+            <p class="feat-desc">Drop any PDF into the sidebar. Text is extracted and chunked automatically.</p>
+        </div>
+        <div class="feat">
+            <span class="feat-icon">🔍</span>
+            <p class="feat-title">Search</p>
+            <p class="feat-desc">FAISS builds a local vector index. No data leaves your machine.</p>
+        </div>
+        <div class="feat">
+            <span class="feat-icon">💬</span>
+            <p class="feat-title">Converse</p>
+            <p class="feat-desc">Ask follow-up questions naturally. Gemini answers from retrieved context.</p>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <div class="features-grid">
-        <div class="feature-card">
-            <div class="feature-icon">📄</div>
-            <div class="feature-title">Smart Upload</div>
-            <div class="feature-desc">Drop any PDF and it's instantly processed</div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🧠</div>
-            <div class="feature-title">AI-Powered</div>
-            <div class="feature-desc">Semantic search with vector embeddings</div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">💬</div>
-            <div class="feature-title">Chat Interface</div>
-            <div class="feature-desc">Ask questions in natural language</div>
-        </div>
+    <div class="stack">
+        <span class="pill">Python</span>
+        <span class="pill">Streamlit</span>
+        <span class="pill">LangChain</span>
+        <span class="pill">FAISS</span>
+        <span class="pill">Google Gemini</span>
+        <span class="pill">PyPDF2</span>
     </div>
     """, unsafe_allow_html=True)
 
     st.markdown("""
-    <div class="app-footer">
-        Built by <a href="https://github.com/Rishikesan05" target="_blank">Rishikesan</a> •
-        Powered by Google Gemini & LangChain
+    <div class="ft">
+        <span>Built by <strong>Rishikesan</strong> — Full-Stack Digital Transformation Engineer</span>
+        <div class="ft-links">
+            <a href="https://rishiware.com/" target="_blank">Portfolio</a>
+            <span>•</span>
+            <a href="https://www.linkedin.com/in/rishikesan-s-6415a7209" target="_blank">LinkedIn</a>
+            <span>•</span>
+            <a href="https://github.com/Rishikesan05" target="_blank">GitHub</a>
+        </div>
     </div>
     """, unsafe_allow_html=True)
