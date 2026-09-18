@@ -1,81 +1,40 @@
-# 📄 AI Document Search (RAG Chatbot)
+# AI Document Search - RAG Chatbot
 
-![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.36+-red.svg)
-![LangChain](https://img.shields.io/badge/LangChain-0.2.6-green.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+**AI Document Search** is an intelligent conversational assistant designed to help you interact with your PDF documents seamlessly. Built purely in Python, the platform focuses on extracting context-aware answers directly from your files using semantic search and Large Language Models.
 
-An intelligent, conversational AI assistant that allows you to chat directly with your PDF documents. Built with **Streamlit**, **LangChain**, and **Google Gemini**, this tool uses **Retrieval-Augmented Generation (RAG)** to provide accurate, context-aware answers based strictly on the uploaded document's contents.
+## 🚀 Key Features
+- **Document Upload**: Easily upload any PDF document via a clean sidebar interface.
+- **Automated Processing**: Instant text extraction, intelligent chunking, and vector embedding creation.
+- **Local Vector Database**: Fast, offline semantic search powered by FAISS.
+- **Conversational Chat**: Ask questions naturally and receive accurate answers derived *only* from the uploaded document's content.
 
----
+## 🛠️ Technical Stack
+- **Framework**: Streamlit (Python Web UI)
+- **Document Processing**: PyPDF2 & LangChain Text Splitters
+- **Database**: FAISS (Facebook AI Similarity Search)
+- **AI Models**: Google Gemini (`gemini-3.5-flash` for generation, `gemini-embedding-2` for embeddings)
 
-## ✨ Features
+## 💻 Getting Started
 
-- **Document Upload**: Seamlessly upload any PDF file.
-- **Automated Processing**: Instantly extracts, chunks, and creates vector embeddings of the text.
-- **Local Vector Database**: Utilizes FAISS for local, fast semantic search without needing a cloud database.
-- **Conversational Interface**: Ask questions naturally and get precise answers derived *only* from the document.
-- **Modern & Lightweight**: Uses purely Python and Streamlit—no complex frontend frameworks required.
-
----
-
-## 🛠️ Tech Stack
-
-- **Frontend / UI**: [Streamlit](https://streamlit.io/)
-- **Document Processing**: `PyPDF2` & `LangChain` Text Splitters
-- **Vector Store**: [FAISS (Facebook AI Similarity Search)](https://github.com/facebookresearch/faiss)
-- **AI Engine**: Google Gemini API (`gemini-3.5-flash` for chat, `gemini-embedding-2` for embeddings)
-
----
-
-## 🚀 Getting Started
-
-### 1. Prerequisites
-- **Python 3.9+** (We recommend using `uv` or `venv` for environment management)
-- A **Google Gemini API Key** (Get yours free from [Google AI Studio](https://aistudio.google.com/))
-
-### 2. Installation
-
-Clone the repository and navigate into the project directory:
-
+1. Clone the repository:
 ```bash
 git clone https://github.com/Rishikesan05/AI-Document-Search.git
 cd AI-Document-Search
 ```
 
-Install the required dependencies:
-
+2. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
-*(Tip: If you use `uv`, you can run `uv pip install -r requirements.txt`)*
 
-### 3. Configuration
-
-1. Create a `.env` file in the root directory (you can copy `.env.example`).
-2. Add your Google API key:
-
+3. Setup Environment:
+Rename `.env.example` to `.env` and add your Google API Key:
 ```env
-GOOGLE_API_KEY=your_google_api_key_here
+GOOGLE_API_KEY=your_api_key_here
 ```
 
-### 4. Running the App
-
-Start the Streamlit development server:
-
+4. Run the app:
 ```bash
 streamlit run app.py
 ```
-*(If using `uv`, run `uv run streamlit run app.py`)*
-
-The app will launch automatically in your browser at `http://localhost:8501`.
-
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/Rishikesan05/AI-Document-Search/issues).
-
-## 📝 License
-
-This project is open-source and available under the [MIT License](LICENSE).
+*(The app will launch in your browser at `http://localhost:8501`)*
