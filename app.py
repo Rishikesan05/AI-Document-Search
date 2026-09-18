@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
@@ -396,14 +397,15 @@ st.markdown("""
 
 # ── PDF Processing ──
 @st.cache_resource(show_spinner=False)
-def process_pdf(file):
-    """Read PDF, chunk text, build FAISS vector store."""
-    reader = PdfReader(file)
+def process_pdfs(files):
+    """Read multiple PDFs, chunk text, build FAISS vector store."""
     text = ""
-    for page in reader.pages:
-        extracted = page.extract_text()
-        if extracted:
-            text += extracted
+    for file in files:
+        reader = PdfReader(file)
+        for page in reader.pages:
+            extracted = page.extract_text()
+            if extracted:
+                text += extracted
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
@@ -427,32 +429,70 @@ if not st.session_state.messages:
         <p class="hero-kicker">AI Powered</p>
         <h1 class="hero-title">Search your documents<br>with intelligence</h1>
         <p class="hero-desc">
-            Upload a PDF and ask questions in plain language.
+            Upload PDFs and ask questions in plain language.
             Powered by retrieval-augmented generation.
-            Answers are grounded entirely in your document.
+            Answers are grounded entirely in your documents.
         </p>
     </div>
     """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
-pdf_file = st.file_uploader(
-    "Upload a PDF document",
+pdf_files = st.file_uploader(
+    "Upload PDF documents",
     type=["pdf"],
+    accept_multiple_files=True,
     label_visibility="collapsed"
 )
 
-if pdf_file:
-    file_size = round(pdf_file.size / 1024, 1)
-    st.success(f"**{pdf_file.name}** ready ({file_size} KB)")
+if pdf_files:
+    total_size = sum([f.size for f in pdf_files])
+    file_size = round(total_size / 1024, 1)
+    
+    with st.spinner("Processing documents..."):
+        vector_store = process_pdfs(pdf_files)
 
-    with st.spinner("Processing document..."):
-        vector_store = process_pdf(pdf_file)
+    # ── Quick Prompts ──
+    if not st.session_state.messages:
+        cols = st.columns(3)
+        with cols[0]:
+            if st.button("📋 Summarize Key Points", use_container_width=True):
+                st.session_state.quick_query = "Summarize the key points of the uploaded documents."
+        with cols[1]:
+            if st.button("🎯 Extract Action Items", use_container_width=True):
+                st.session_state.quick_query = "Extract the main action items or tasks mentioned in the documents."
+        with cols[2]:
+            if st.button("🔍 Find Important Dates", use_container_width=True):
+                st.session_state.quick_query = "List any important dates, deadlines, or schedules mentioned."
+
+    # ── Chat Controls ──
+    if st.session_state.messages:
+        ctrl_cols = st.columns([2, 2, 8])
+        with ctrl_cols[0]:
+            if st.button("🗑️ Clear Chat", use_container_width=True):
+                st.session_state.messages = []
+                st.rerun()
+        with ctrl_cols[1]:
+            chat_export = ""
+            for m in st.session_state.messages:
+                role = "User" if m["role"] == "user" else "AI"
+                chat_export += f"{role}: {m['content']}\n\n"
+            st.download_button(
+                label="📥 Export Chat",
+                data=chat_export,
+                file_name="chat_history.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    user_query = st.chat_input("Ask a question about your document...")
+    user_query = st.chat_input("Ask a question about your documents...")
+    
+    if "quick_query" in st.session_state:
+        user_query = st.session_state.quick_query
+        del st.session_state.quick_query
 
     if user_query:
         st.session_state.messages.append({"role": "user", "content": user_query})
@@ -460,21 +500,38 @@ if pdf_file:
             st.markdown(user_query)
 
         with st.chat_message("assistant"):
+            start_time = time.time()
             with st.spinner("Searching..."):
                 docs = vector_store.similarity_search(user_query, k=3)
+                context = "\n\n".join([doc.page_content for doc in docs])
+                prompt = f"Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.\n\nContext:\n{context}\n\nQuestion: {user_query}\n\nHelpful Answer:"
+                
                 llm = ChatGoogleGenerativeAI(
                     model="models/gemini-3.5-flash",
                     temperature=0.3
                 )
-                chain = load_qa_chain(llm, chain_type="stuff")
-                response = chain.invoke(
-                    {"input_documents": docs, "question": user_query}
-                )
-                st.markdown(response["output_text"])
+                
+            response_placeholder = st.empty()
+            full_response = ""
+            
+            for chunk in llm.stream(prompt):
+                full_response += chunk.content
+                response_placeholder.markdown(full_response + "▌")
+            
+            response_placeholder.markdown(full_response)
+            
+            latency = time.time() - start_time
+            
+            st.markdown(f"<p style='font-size: 11px; color: var(--text3); margin-top: 8px;'>⚡ Retrieved in {latency:.2f}s · {len(docs)} chunks analyzed</p>", unsafe_allow_html=True)
+            
+            with st.expander("View Retrieved Context"):
+                for i, doc in enumerate(docs):
+                    st.markdown(f"**Chunk {i+1}**")
+                    st.info(doc.page_content)
 
         st.session_state.messages.append({
             "role": "assistant",
-            "content": response["output_text"]
+            "content": full_response
         })
 
 else:
