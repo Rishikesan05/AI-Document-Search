@@ -409,6 +409,27 @@ st.markdown("""
         padding: 3px 10px;
         border-radius: 50px;
     }
+    
+    /* Responsive Design for Mobile */
+    @media (max-width: 768px) {
+        .features {
+            grid-template-columns: 1fr;
+            gap: 12px;
+            padding: 0 16px;
+        }
+        
+        .hero-title {
+            font-size: 28px;
+        }
+        
+        .hero {
+            padding: 48px 16px 24px 16px;
+        }
+        
+        .stack {
+            padding: 0 16px;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
