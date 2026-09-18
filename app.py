@@ -45,10 +45,10 @@ st.markdown("""
         overflow-x: hidden !important;
     }
     
-    /* Reduce default Streamlit padding to prevent unwanted vertical scrolling */
+    /* Reduce default Streamlit padding to prevent unwanted vertical scrolling and massive side margins on mobile */
     [data-testid="stMainBlockContainer"] {
-        padding-top: 2rem !important;
-        padding-bottom: 2rem !important;
+        padding: 2rem 1rem !important;
+        max-width: 100% !important;
     }
 
     #MainMenu, footer, header { visibility: hidden; }
@@ -235,12 +235,13 @@ st.markdown("""
     }
 
     .hero-title {
-        font-size: 36px;
+        font-size: clamp(28px, 8vw, 36px);
         font-weight: 700;
         line-height: 1.2;
         color: var(--text);
         margin: 0 0 20px 0;
         letter-spacing: -0.5px;
+        word-wrap: break-word;
     }
 
     .hero-desc {
@@ -464,7 +465,7 @@ if "messages" not in st.session_state:
 # ── Main ──
 if not st.session_state.messages:
     st.markdown("""
-    <div class="hero" style="padding: 48px 24px 24px 24px;">
+    <div class="hero">
         <p class="hero-kicker">AI Powered</p>
         <h1 class="hero-title">Search your documents<br>with intelligence</h1>
         <p class="hero-desc">
