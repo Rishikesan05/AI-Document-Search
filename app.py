@@ -168,18 +168,36 @@ st.markdown("""
 
     /* Buttons */
     .stButton > button {
+        border-radius: 50px !important;
+        padding: 8px 16px !important;
+        font-weight: 500 !important;
+        font-size: 12px !important;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        min-height: 0 !important;
+        line-height: 1.4 !important;
+    }
+
+    /* Secondary Buttons (Chips / Pills) */
+    .stButton > button[data-testid="baseButton-secondary"] {
+        background-color: var(--bg) !important;
+        color: var(--text) !important;
+        border: 0.8px solid var(--border) !important;
+    }
+
+    .stButton > button[data-testid="baseButton-secondary"]:hover {
+        border-color: var(--text) !important;
+        background-color: var(--bg2) !important;
+    }
+
+    /* Primary Buttons */
+    .stButton > button[data-testid="baseButton-primary"] {
         background-color: var(--accent) !important;
         color: #ffffff !important;
         border: none !important;
-        border-radius: 50px !important;
-        padding: 10px 24px !important;
-        font-weight: 500 !important;
-        font-size: 13px !important;
-        transition: opacity 0.15s ease;
-        cursor: pointer;
     }
 
-    .stButton > button:hover {
+    .stButton > button[data-testid="baseButton-primary"]:hover {
         opacity: 0.85 !important;
     }
 
