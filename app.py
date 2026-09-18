@@ -51,7 +51,9 @@ st.markdown("""
         max-width: 100% !important;
     }
 
-    #MainMenu, footer, header { visibility: hidden; }
+    #MainMenu, header, footer, [data-testid="stHeader"], [data-testid="stFooter"] { 
+        display: none !important; 
+    }
     .stDeployButton { display: none; }
     
     /* Hide default Streamlit header anchor links (the 🔗 icon) */
