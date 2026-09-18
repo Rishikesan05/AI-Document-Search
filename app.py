@@ -52,6 +52,17 @@ st.markdown("""
 
     #MainMenu, footer, header { visibility: hidden; }
     .stDeployButton { display: none; }
+    
+    /* Hide default Streamlit header anchor links (the 🔗 icon) */
+    a.header-anchor,
+    [data-testid="stMarkdownContainer"] h1 a,
+    [data-testid="stMarkdownContainer"] h2 a,
+    [data-testid="stMarkdownContainer"] h3 a,
+    [data-testid="stMarkdownContainer"] h4 a,
+    [data-testid="stMarkdownContainer"] h5 a,
+    [data-testid="stMarkdownContainer"] h6 a {
+        display: none !important;
+    }
 
     /* Sidebar */
     section[data-testid="stSidebar"] {
