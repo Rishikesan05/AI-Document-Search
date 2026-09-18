@@ -97,14 +97,50 @@ st.markdown("""
         line-height: 1.6;
     }
 
-    .stChatMessage[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]) {
+    .stChatMessage[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"]),
+    .stChatMessage[data-testid="stChatMessage"]:has([data-testid*="user"]) {
         background: var(--bg2) !important;
         border: 0.8px solid var(--border) !important;
     }
 
-    .stChatMessage[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) {
+    .stChatMessage[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]),
+    .stChatMessage[data-testid="stChatMessage"]:has([data-testid*="assistant"]) {
         background: var(--bg) !important;
         border: 0.8px solid var(--border) !important;
+    }
+
+    /* Minimalist Monochrome Chat Avatars (Replaces bright red/orange/green colors) */
+    [data-testid="stChatMessageAvatarContainer"],
+    [data-testid="stChatMessageAvatarCustom"],
+    [data-testid="chatAvatarIcon-user"],
+    [data-testid="chatAvatarIcon-assistant"] {
+        background-color: #f0f0f0 !important;
+        color: #1a1a1a !important;
+        border: 0.8px solid var(--border) !important;
+        border-radius: 8px !important;
+    }
+
+    [data-testid="chatAvatarIcon-user"] svg,
+    [data-testid="chatAvatarIcon-assistant"] svg,
+    [data-testid="stChatMessageAvatarContainer"] svg {
+        fill: #1a1a1a !important;
+        color: #1a1a1a !important;
+    }
+
+    /* Chat Input submit button & icons */
+    [data-testid="stChatInputSubmitButton"] {
+        color: #1a1a1a !important;
+    }
+    
+    [data-testid="stChatInputSubmitButton"] svg {
+        fill: #1a1a1a !important;
+        color: #1a1a1a !important;
+    }
+
+    .stChatInput [data-testid="stIconMaterial"],
+    .stChatInput [data-testid="stChatMessageAvatarContainer"] {
+        background-color: #f0f0f0 !important;
+        color: #1a1a1a !important;
     }
 
     /* Chat Input */
