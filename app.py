@@ -11,8 +11,8 @@ load_dotenv()
 st.set_page_config(
     page_title="AI Document Search",
     page_icon="📄",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="centered",
+    initial_sidebar_state="collapsed"
 )
 
 # ── CSS Design System (rishiware.com style) ──
@@ -341,46 +341,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ── Sidebar ──
-with st.sidebar:
-    st.markdown("""
-    <p class="sb-brand">📄 Document Search</p>
-    <p class="sb-sub">AI-powered PDF analysis tool</p>
-    """, unsafe_allow_html=True)
-
-    pdf_file = st.file_uploader(
-        "Upload a PDF document",
-        type=["pdf"],
-        label_visibility="collapsed"
-    )
-
-    if pdf_file is not None:
-        file_size = round(pdf_file.size / 1024, 1)
-        st.success(f"**{pdf_file.name}** ready ({file_size} KB)")
-
-    st.markdown("""
-    <div class="sb-section">
-        <p class="sb-section-title">How it works</p>
-        <p class="sb-step">
-            <strong>1.</strong> Upload any PDF document<br>
-            <strong>2.</strong> AI reads and indexes every page<br>
-            <strong>3.</strong> Ask questions in plain English<br>
-            <strong>4.</strong> Get answers from your document
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("---")
-    st.markdown("""
-    <div class="sb-footer">
-        <span class="sb-footer-pill">Streamlit</span>
-        <span class="sb-footer-pill">LangChain</span>
-        <span class="sb-footer-pill">Gemini</span>
-        <span class="sb-footer-pill">FAISS</span>
-    </div>
-    """, unsafe_allow_html=True)
-
-
 # ── PDF Processing ──
 @st.cache_resource(show_spinner=False)
 def process_pdf(file):
@@ -408,7 +368,30 @@ if "messages" not in st.session_state:
 
 
 # ── Main ──
+if not st.session_state.messages:
+    st.markdown("""
+    <div class="hero" style="padding: 48px 24px 24px 24px;">
+        <p class="hero-kicker">AI Powered</p>
+        <h1 class="hero-title">Search your documents<br>with intelligence</h1>
+        <p class="hero-desc">
+            Upload a PDF and ask questions in plain language.
+            Powered by retrieval-augmented generation.
+            Answers are grounded entirely in your document.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+pdf_file = st.file_uploader(
+    "Upload a PDF document",
+    type=["pdf"],
+    label_visibility="collapsed"
+)
+
 if pdf_file:
+    file_size = round(pdf_file.size / 1024, 1)
+    st.success(f"**{pdf_file.name}** ready ({file_size} KB)")
+
     with st.spinner("Processing document..."):
         vector_store = process_pdf(pdf_file)
 
@@ -443,23 +426,11 @@ if pdf_file:
 
 else:
     st.markdown("""
-    <div class="hero">
-        <p class="hero-kicker">AI Powered</p>
-        <h1 class="hero-title">Search your documents<br>with intelligence</h1>
-        <p class="hero-desc">
-            Upload a PDF and ask questions in plain language.
-            Powered by retrieval-augmented generation.
-            Answers are grounded entirely in your document.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("""
     <div class="features">
         <div class="feat">
             <span class="feat-icon">📄</span>
             <p class="feat-title">Upload</p>
-            <p class="feat-desc">Drop any PDF into the sidebar. Text is extracted and chunked automatically.</p>
+            <p class="feat-desc">Drop any PDF into the uploader. Text is extracted and chunked automatically.</p>
         </div>
         <div class="feat">
             <span class="feat-icon">🔍</span>
@@ -485,19 +456,19 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="ft">
-        <span>Built by <strong>Rishikesan</strong></span>
-        <div class="ft-links">
-            <a href="https://rishiware.com/" target="_blank" title="Portfolio">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-            </a>
-            <a href="https://www.linkedin.com/in/rishikesan05/" target="_blank" title="LinkedIn">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-            </a>
-            <a href="https://github.com/Rishikesan05" target="_blank" title="GitHub">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-            </a>
-        </div>
+st.markdown("""
+<div class="ft">
+    <span>Built by <strong>Rishikesan</strong></span>
+    <div class="ft-links">
+        <a href="https://rishiware.com/" target="_blank" title="Portfolio">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/rishikesan05/" target="_blank" title="LinkedIn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+        </a>
+        <a href="https://github.com/Rishikesan05" target="_blank" title="GitHub">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+        </a>
     </div>
-    """, unsafe_allow_html=True)
+</div>
+""", unsafe_allow_html=True)
