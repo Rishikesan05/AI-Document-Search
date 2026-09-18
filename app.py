@@ -38,10 +38,16 @@ st.markdown("""
         font-family: 'Roboto Mono', monospace !important;
     }
 
-    html, body, .stApp {
+    html, body, .stApp, [data-testid="stAppViewContainer"] {
         background-color: var(--bg) !important;
         color: var(--text) !important;
         overflow-x: hidden !important;
+    }
+    
+    /* Reduce default Streamlit padding to prevent unwanted vertical scrolling */
+    [data-testid="stMainBlockContainer"] {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
     }
 
     #MainMenu, footer, header { visibility: hidden; }
