@@ -231,7 +231,7 @@ st.markdown("""
         letter-spacing: 2px;
         text-transform: uppercase;
         color: var(--text2);
-        margin: 0 0 16px 0;
+        margin: 0 0 16px 0 !important;
     }
 
     .hero-title {
@@ -459,7 +459,7 @@ if not st.session_state.messages:
     st.markdown("""
     <div class="hero">
         <p class="hero-kicker">AI Powered</p>
-        <h1 class="hero-title">Search your documents<br>with intelligence</h1>
+        <div class="hero-title">Search your documents<br>with intelligence</div>
         <p class="hero-desc">
             Upload PDFs and ask questions in plain language.
             Powered by retrieval-augmented generation.
