@@ -532,25 +532,32 @@ if pdf_files:
             response_placeholder = st.empty()
             full_response = ""
             
-            for chunk in llm.stream(prompt):
-                full_response += chunk.content
-                response_placeholder.markdown(full_response + "▌")
-            
-            response_placeholder.markdown(full_response)
-            
-            latency = time.time() - start_time
-            
-            st.markdown(f"<p style='font-size: 11px; color: var(--text3); margin-top: 8px;'>⚡ Retrieved in {latency:.2f}s · {len(docs)} chunks analyzed</p>", unsafe_allow_html=True)
-            
-            with st.expander("View Retrieved Context"):
-                for i, doc in enumerate(docs):
-                    st.markdown(f"**Chunk {i+1}**")
-                    st.info(doc.page_content)
+            try:
+                for chunk in llm.stream(prompt):
+                    full_response += chunk.content
+                    response_placeholder.markdown(full_response + "▌")
+                
+                response_placeholder.markdown(full_response)
+                
+                latency = time.time() - start_time
+                
+                st.markdown(f"<p style='font-size: 11px; color: var(--text3); margin-top: 8px;'>⚡ Retrieved in {latency:.2f}s · {len(docs)} chunks analyzed</p>", unsafe_allow_html=True)
+                
+                with st.expander("View Retrieved Context"):
+                    for i, doc in enumerate(docs):
+                        st.markdown(f"**Chunk {i+1}**")
+                        st.info(doc.page_content)
 
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": full_response
-        })
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": full_response
+                })
+            except Exception as e:
+                error_msg = str(e)
+                if "429" in error_msg or "ResourceExhausted" in error_msg:
+                    st.error("⚠️ **Rate Limit Exceeded:** The free tier of Gemini API allows limited requests per minute. Please wait 30 seconds and try again.")
+                else:
+                    st.error(f"⚠️ **Error generating response:** {error_msg}")
 
 else:
     st.markdown("""
