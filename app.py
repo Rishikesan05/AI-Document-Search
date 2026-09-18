@@ -235,14 +235,15 @@ st.markdown("""
     }
 
     .hero-title {
-        font-size: clamp(22px, 8vw, 36px);
+        font-size: clamp(16px, 10vw, 36px);
         font-weight: 700;
         line-height: 1.3;
         color: var(--text);
         margin: 0 0 20px 0;
         letter-spacing: -0.5px;
-        word-break: keep-all;
-        overflow-wrap: normal;
+        word-break: keep-all !important;
+        overflow-wrap: normal !important;
+        white-space: pre-wrap !important;
     }
 
     .hero-desc {
@@ -430,6 +431,21 @@ st.markdown("""
         
         .stack {
             padding: 0 16px;
+        }
+    }
+    
+    /* Extreme narrow screens (e.g., resized desktop windows < 400px) */
+    @media (max-width: 400px) {
+        [data-testid="stMainBlockContainer"] {
+            padding: 1rem 0.5rem !important;
+        }
+        
+        .hero {
+            padding: 24px 4px 12px 4px;
+        }
+        
+        .hero-title {
+            font-size: clamp(14px, 12vw, 24px);
         }
     }
 </style>
