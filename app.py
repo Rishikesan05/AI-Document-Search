@@ -57,14 +57,15 @@ st.markdown("""
     
     /* Hide Streamlit Cloud Deploy, Viewer, and Creator Badges */
     .stDeployButton,
-    #viewerBadge_container_1,
     [data-testid="viewerBadge"],
     [data-testid="creatorBadge"],
     [data-testid="stDecoration"],
     [data-testid="stToolbar"],
-    .viewerBadge_container__1QSob,
-    .viewerBadge_link__1S137,
-    .viewerBadge_text__1JaDK {
+    div[class^="viewerBadge_container"],
+    div[class*="viewerBadge_container"],
+    div[class^="creatorBadge"],
+    div[class*="creatorBadge"],
+    a[href*="streamlit.io/cloud"] {
         display: none !important;
     }
     
