@@ -495,16 +495,19 @@ if pdf_files:
 
     # ── Quick Prompts ──
     if not st.session_state.messages:
-        cols = st.columns(3)
+        cols = st.columns(4)
         with cols[0]:
-            if st.button("⊡ Summarize"):
+            if st.button("⊡ Summary", use_container_width=True):
                 st.session_state.quick_query = "Summarize the key points of the uploaded documents."
         with cols[1]:
-            if st.button("✓ Action Items"):
+            if st.button("✓ Actions", use_container_width=True):
                 st.session_state.quick_query = "Extract the main action items or tasks mentioned in the documents."
         with cols[2]:
-            if st.button("◷ Key Dates"):
+            if st.button("◷ Dates", use_container_width=True):
                 st.session_state.quick_query = "List any important dates, deadlines, or schedules mentioned."
+        with cols[3]:
+            if st.button("❓ FAQs", use_container_width=True):
+                st.session_state.quick_query = "What are the most important or frequently asked questions in these documents?"
 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
