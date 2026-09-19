@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+import re
 from PyPDF2 import PdfReader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
@@ -462,6 +463,8 @@ def process_pdfs(files):
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
+if "uploader_key" not in st.session_state:
+    st.session_state.uploader_key = 0
 
 
 # ── Main ──
@@ -483,7 +486,8 @@ pdf_files = st.file_uploader(
     "Upload PDF documents",
     type=["pdf"],
     accept_multiple_files=True,
-    label_visibility="collapsed"
+    label_visibility="collapsed",
+    key=f"pdf_uploader_{st.session_state.uploader_key}"
 )
 
 if pdf_files:
@@ -523,45 +527,6 @@ if pdf_files:
             st.error("**Rate Limit Exceeded:** Please wait 30 seconds and try again.")
         else:
             st.error(f"**Error generating response:** {error_msg}")
-
-    # ── Action Controls (Bottom of chat) ──
-    if st.session_state.messages or "failed_query" in st.session_state:
-        st.markdown("<br>", unsafe_allow_html=True)
-        has_error = "failed_query" in st.session_state
-        if has_error:
-            ctrl_cols = st.columns([2.5, 2.5, 2.5, 2.5])
-        else:
-            ctrl_cols = st.columns([2.5, 2.5, 5])
-            
-        col_idx = 0
-        if has_error:
-            with ctrl_cols[col_idx]:
-                if st.button("↻ Retry", key="retry_btn", use_container_width=True):
-                    st.session_state.retry_query = st.session_state.failed_query
-                    del st.session_state.failed_query
-                    st.rerun()
-            col_idx += 1
-            
-        with ctrl_cols[col_idx]:
-            chat_export = ""
-            for m in st.session_state.messages:
-                role = "User" if m["role"] == "user" else "AI"
-                chat_export += f"{role}: {m['content']}\n\n"
-            st.download_button(
-                label="⤓ Export Chat",
-                data=chat_export if chat_export else "No messages.",
-                file_name="chat_history.txt",
-                mime="text/plain",
-                use_container_width=True
-            )
-        col_idx += 1
-            
-        with ctrl_cols[col_idx]:
-            if st.button("🗑 Clear Chat", use_container_width=True):
-                st.session_state.messages = []
-                if "failed_query" in st.session_state:
-                    del st.session_state.failed_query
-                st.rerun()
 
     user_query = st.chat_input("Ask a question about your documents...")
     
@@ -619,6 +584,47 @@ if pdf_files:
                 failed_msg = st.session_state.messages.pop()
                 st.session_state.failed_query = failed_msg["content"]
                 st.session_state.last_error = str(e)
+                st.rerun()
+
+    # ── Action Controls (Bottom of chat) ──
+    if st.session_state.messages or "failed_query" in st.session_state:
+        st.markdown("<br>", unsafe_allow_html=True)
+        has_error = "failed_query" in st.session_state
+        if has_error:
+            ctrl_cols = st.columns([2.5, 2.5, 2.5, 2.5])
+        else:
+            ctrl_cols = st.columns([2.5, 2.5, 5])
+            
+        col_idx = 0
+        if has_error:
+            with ctrl_cols[col_idx]:
+                if st.button("↻ Retry", key="retry_btn", use_container_width=True):
+                    st.session_state.retry_query = st.session_state.failed_query
+                    del st.session_state.failed_query
+                    st.rerun()
+            col_idx += 1
+            
+        with ctrl_cols[col_idx]:
+            chat_export = ""
+            for m in st.session_state.messages:
+                role = "User" if m["role"] == "user" else "AI"
+                clean_content = re.sub(r'[*_#`]', '', m['content'])
+                chat_export += f"{role}: {clean_content}\n\n"
+            st.download_button(
+                label="⤓ Export Chat",
+                data=chat_export if chat_export else "No messages.",
+                file_name="chat_history.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
+        col_idx += 1
+            
+        with ctrl_cols[col_idx]:
+            if st.button("🗑 Clear Chat", use_container_width=True):
+                st.session_state.messages = []
+                st.session_state.uploader_key += 1
+                if "failed_query" in st.session_state:
+                    del st.session_state.failed_query
                 st.rerun()
 
 else:
