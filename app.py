@@ -493,21 +493,21 @@ if pdf_files:
     if not st.session_state.messages:
         cols = st.columns(3)
         with cols[0]:
-            if st.button("Summarize Key Points", icon=":material/format_list_bulleted:", use_container_width=True):
+            if st.button("Summarize Key Points", use_container_width=True):
                 st.session_state.quick_query = "Summarize the key points of the uploaded documents."
         with cols[1]:
-            if st.button("Extract Action Items", icon=":material/task_alt:", use_container_width=True):
+            if st.button("Extract Action Items", use_container_width=True):
                 st.session_state.quick_query = "Extract the main action items or tasks mentioned in the documents."
         with cols[2]:
-            if st.button("Find Important Dates", icon=":material/calendar_today:", use_container_width=True):
+            if st.button("Find Important Dates", use_container_width=True):
                 st.session_state.quick_query = "List any important dates, deadlines, or schedules mentioned."
 
     # ── Chat Controls ──
     if st.session_state.messages:
         _, opt_col = st.columns([8, 2])
         with opt_col:
-            with st.popover("Options", icon=":material/settings:", use_container_width=True):
-                if st.button("Clear Chat", icon=":material/delete:", use_container_width=True):
+            with st.popover("Options", use_container_width=True):
+                if st.button("Clear Chat", use_container_width=True):
                     st.session_state.messages = []
                     st.rerun()
                 
@@ -517,7 +517,6 @@ if pdf_files:
                     chat_export += f"{role}: {m['content']}\n\n"
                 st.download_button(
                     label="Export Chat",
-                    icon=":material/download:",
                     data=chat_export,
                     file_name="chat_history.txt",
                     mime="text/plain",
@@ -531,11 +530,11 @@ if pdf_files:
     if "failed_query" in st.session_state:
         error_msg = st.session_state.get("last_error", "")
         if "429" in error_msg or "ResourceExhausted" in error_msg:
-            st.error("**Rate Limit Exceeded:** The free tier of Gemini API allows limited requests per minute. Please wait 30 seconds and try again.", icon=":material/warning:")
+            st.error("**Rate Limit Exceeded:** The free tier of Gemini API allows limited requests per minute. Please wait 30 seconds and try again.")
         else:
-            st.error(f"**Error generating response:** {error_msg}", icon=":material/error:")
+            st.error(f"**Error generating response:** {error_msg}")
             
-        if st.button("Retry", icon=":material/refresh:", key="retry_btn"):
+        if st.button("Retry", key="retry_btn"):
             st.session_state.retry_query = st.session_state.failed_query
             del st.session_state.failed_query
             st.rerun()
