@@ -585,7 +585,7 @@ if pdf_files:
                 prompt = f"Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.\n\nContext:\n{context}\n\nQuestion: {user_query}\n\nHelpful Answer:"
                 
                 llm = ChatGoogleGenerativeAI(
-                    model="gemini-1.5-flash",
+                    model="gemini-pro",
                     temperature=0.3
                 )
                 
