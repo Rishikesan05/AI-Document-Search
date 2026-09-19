@@ -17,6 +17,26 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+import streamlit.components.v1 as components
+components.html(
+    """
+    <script>
+        const target = window.parent.document.querySelector('title');
+        if(target) {
+            target.innerText = "AI Document Search";
+            const observer = new MutationObserver(() => {
+                if (target.innerText !== "AI Document Search") {
+                    target.innerText = "AI Document Search";
+                }
+            });
+            observer.observe(target, { childList: true, characterData: true, subtree: true });
+        }
+    </script>
+    """,
+    height=0,
+    width=0,
+)
+
 # ── CSS Design System (rishiware.com style) ──
 st.markdown("""
 <style>
