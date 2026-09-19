@@ -497,13 +497,13 @@ if pdf_files:
     if not st.session_state.messages:
         cols = st.columns(3)
         with cols[0]:
-            if st.button("⊡ Summarize", use_container_width=True):
+            if st.button("⊡ Summarize"):
                 st.session_state.quick_query = "Summarize the key points of the uploaded documents."
         with cols[1]:
-            if st.button("✓ Action Items", use_container_width=True):
+            if st.button("✓ Action Items"):
                 st.session_state.quick_query = "Extract the main action items or tasks mentioned in the documents."
         with cols[2]:
-            if st.button("◷ Key Dates", use_container_width=True):
+            if st.button("◷ Key Dates"):
                 st.session_state.quick_query = "List any important dates, deadlines, or schedules mentioned."
 
     for message in st.session_state.messages:
