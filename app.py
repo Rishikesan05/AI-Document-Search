@@ -51,7 +51,7 @@ st.markdown("""
         max-width: 100% !important;
     }
 
-    #MainMenu, header, footer, [data-testid="stHeader"], [data-testid="stFooter"] { 
+    #MainMenu, [data-testid="stHeader"], [data-testid="stFooter"] { 
         display: none !important; 
     }
     
@@ -479,7 +479,7 @@ pdf_files = st.file_uploader(
     "Upload PDF documents",
     type=["pdf"],
     accept_multiple_files=True,
-    label_visibility="collapsed"
+    label_visibility="hidden"
 )
 
 if pdf_files:
