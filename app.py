@@ -91,18 +91,7 @@ st.markdown("""
         font-size: 13px;
     }
 
-    /* File Uploader */
-    section[data-testid="stFileUploader"] {
-        border: 1px dashed var(--border) !important;
-        border-radius: var(--radius) !important;
-        padding: 24px 16px !important;
-        background: var(--bg) !important;
-        transition: border-color 0.2s ease;
-    }
-
-    section[data-testid="stFileUploader"]:hover {
-        border-color: var(--accent) !important;
-    }
+    /* File Uploader styling removed to prevent conflicts with Streamlit 1.38 native layout */
 
     /* Chat Messages */
     .stChatMessage[data-testid="stChatMessage"] {
@@ -287,13 +276,14 @@ st.markdown("""
     }
 
     .feat-icon {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         background: var(--accent-soft);
         border-radius: 50px;
-        padding: 6px 12px;
-        font-size: 14px;
+        padding: 10px;
         margin-bottom: 14px;
-        filter: grayscale(100%);
+        color: var(--text);
     }
 
     .feat-title {
@@ -612,17 +602,23 @@ else:
     st.markdown("""
     <div class="features">
         <div class="feat">
-            <span class="feat-icon">📄</span>
+            <span class="feat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </span>
             <p class="feat-title">Upload</p>
             <p class="feat-desc">Drop any PDF into the uploader. Text is extracted and chunked automatically.</p>
         </div>
         <div class="feat">
-            <span class="feat-icon">🔍</span>
+            <span class="feat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </span>
             <p class="feat-title">Search</p>
             <p class="feat-desc">FAISS builds a local vector index. No data leaves your machine.</p>
         </div>
         <div class="feat">
-            <span class="feat-icon">💬</span>
+            <span class="feat-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </span>
             <p class="feat-title">Converse</p>
             <p class="feat-desc">Ask follow-up questions naturally. Gemini answers from retrieved context.</p>
         </div>
