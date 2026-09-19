@@ -493,22 +493,24 @@ if pdf_files:
     if not st.session_state.messages:
         cols = st.columns(3)
         with cols[0]:
-            if st.button("Summarize Key Points", use_container_width=True):
+            if st.button("⊡  Summarize Key Points", use_container_width=True):
                 st.session_state.quick_query = "Summarize the key points of the uploaded documents."
         with cols[1]:
-            if st.button("Extract Action Items", use_container_width=True):
+            if st.button("✓  Extract Action Items", use_container_width=True):
                 st.session_state.quick_query = "Extract the main action items or tasks mentioned in the documents."
         with cols[2]:
-            if st.button("Find Important Dates", use_container_width=True):
+            if st.button("◷  Find Important Dates", use_container_width=True):
                 st.session_state.quick_query = "List any important dates, deadlines, or schedules mentioned."
 
     # ── Chat Controls ──
-    if st.session_state.messages:
+    if st.session_state.messages or "failed_query" in st.session_state:
         _, opt_col = st.columns([8, 2])
         with opt_col:
             with st.popover("Options", use_container_width=True):
                 if st.button("Clear Chat", use_container_width=True):
                     st.session_state.messages = []
+                    if "failed_query" in st.session_state:
+                        del st.session_state.failed_query
                     st.rerun()
                 
                 chat_export = ""
@@ -517,7 +519,7 @@ if pdf_files:
                     chat_export += f"{role}: {m['content']}\n\n"
                 st.download_button(
                     label="Export Chat",
-                    data=chat_export,
+                    data=chat_export if chat_export else "No messages yet.",
                     file_name="chat_history.txt",
                     mime="text/plain",
                     use_container_width=True
@@ -598,6 +600,9 @@ if pdf_files:
                 st.rerun()
 
 else:
+    pass
+
+if not st.session_state.messages:
     st.markdown("""
     <div class="features">
         <div class="feat">
