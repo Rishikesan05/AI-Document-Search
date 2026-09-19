@@ -174,7 +174,7 @@ st.markdown("""
     .stButton > button,
     [data-testid="stDownloadButton"] > button {
         border-radius: 50px !important;
-        padding: 8px 16px !important;
+        padding: 8px 24px !important;
         font-weight: 500 !important;
         font-size: 12px !important;
         transition: all 0.2s ease;
@@ -501,13 +501,13 @@ if pdf_files:
     if not st.session_state.messages:
         cols = st.columns(3)
         with cols[0]:
-            if st.button("⊡ Summarize Key Points", use_container_width=True):
+            if st.button("⊡ Summarize Key Points"):
                 st.session_state.quick_query = "Summarize the key points of the uploaded documents."
         with cols[1]:
-            if st.button("✓ Extract Action Items", use_container_width=True):
+            if st.button("✓ Extract Action Items"):
                 st.session_state.quick_query = "Extract the main action items or tasks mentioned in the documents."
         with cols[2]:
-            if st.button("◷ Find Important Dates", use_container_width=True):
+            if st.button("◷ Find Important Dates"):
                 st.session_state.quick_query = "List any important dates, deadlines, or schedules mentioned."
 
     for message in st.session_state.messages:
