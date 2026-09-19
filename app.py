@@ -536,11 +536,21 @@ if pdf_files:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
+    # Check if the last message was a user query that failed to get a response
+    if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
+        if st.button("🔄 Retry Generation"):
+            st.session_state.retry_query = st.session_state.messages.pop()["content"]
+            st.rerun()
+
     user_query = st.chat_input("Ask a question about your documents...")
     
     if "quick_query" in st.session_state:
         user_query = st.session_state.quick_query
         del st.session_state.quick_query
+        
+    if "retry_query" in st.session_state:
+        user_query = st.session_state.retry_query
+        del st.session_state.retry_query
 
     if user_query:
         st.session_state.messages.append({"role": "user", "content": user_query})
