@@ -511,6 +511,10 @@ if pdf_files:
             st.markdown(message["content"])
 
     if "failed_query" in st.session_state:
+        # Show the user's message that failed so it doesn't disappear
+        with st.chat_message("user"):
+            st.markdown(st.session_state.failed_query)
+            
         error_msg = st.session_state.get("last_error", "")
         if "429" in error_msg or "ResourceExhausted" in error_msg:
             st.error("**Rate Limit Exceeded:** Please wait 30 seconds and try again.")
