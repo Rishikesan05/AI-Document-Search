@@ -536,10 +536,16 @@ if pdf_files:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # Check if the last message was a user query that failed to get a response
-    if st.session_state.messages and st.session_state.messages[-1]["role"] == "user":
-        if st.button("🔄 Retry Generation"):
-            st.session_state.retry_query = st.session_state.messages.pop()["content"]
+    if "failed_query" in st.session_state:
+        error_msg = st.session_state.get("last_error", "")
+        if "429" in error_msg or "ResourceExhausted" in error_msg:
+            st.error("⚠️ **Rate Limit Exceeded:** The free tier of Gemini API allows limited requests per minute. Please wait 30 seconds and try again.")
+        else:
+            st.error(f"⚠️ **Error generating response:** {error_msg}")
+            
+        if st.button("🔄 Retry", key="retry_btn"):
+            st.session_state.retry_query = st.session_state.failed_query
+            del st.session_state.failed_query
             st.rerun()
 
     user_query = st.chat_input("Ask a question about your documents...")
@@ -553,6 +559,8 @@ if pdf_files:
         del st.session_state.retry_query
 
     if user_query:
+        if "failed_query" in st.session_state:
+            del st.session_state.failed_query
         st.session_state.messages.append({"role": "user", "content": user_query})
         with st.chat_message("user"):
             st.markdown(user_query)
@@ -593,11 +601,10 @@ if pdf_files:
                     "content": full_response
                 })
             except Exception as e:
-                error_msg = str(e)
-                if "429" in error_msg or "ResourceExhausted" in error_msg:
-                    st.error("⚠️ **Rate Limit Exceeded:** The free tier of Gemini API allows limited requests per minute. Please wait 30 seconds and try again.")
-                else:
-                    st.error(f"⚠️ **Error generating response:** {error_msg}")
+                failed_msg = st.session_state.messages.pop()
+                st.session_state.failed_query = failed_msg["content"]
+                st.session_state.last_error = str(e)
+                st.rerun()
 
 else:
     st.markdown("""
