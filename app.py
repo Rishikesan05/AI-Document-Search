@@ -513,23 +513,24 @@ if pdf_files:
 
     # ── Chat Controls ──
     if st.session_state.messages:
-        ctrl_cols = st.columns([2, 2, 8])
-        with ctrl_cols[0]:
-            if st.button("🗑️ Clear Chat", use_container_width=True):
-                st.session_state.messages = []
-                st.rerun()
-        with ctrl_cols[1]:
-            chat_export = ""
-            for m in st.session_state.messages:
-                role = "User" if m["role"] == "user" else "AI"
-                chat_export += f"{role}: {m['content']}\n\n"
-            st.download_button(
-                label="📥 Export Chat",
-                data=chat_export,
-                file_name="chat_history.txt",
-                mime="text/plain",
-                use_container_width=True
-            )
+        _, opt_col = st.columns([8, 2])
+        with opt_col:
+            with st.popover("⚙️ Options", use_container_width=True):
+                if st.button("🗑️ Clear Chat", use_container_width=True):
+                    st.session_state.messages = []
+                    st.rerun()
+                
+                chat_export = ""
+                for m in st.session_state.messages:
+                    role = "User" if m["role"] == "user" else "AI"
+                    chat_export += f"{role}: {m['content']}\n\n"
+                st.download_button(
+                    label="📥 Export Chat",
+                    data=chat_export,
+                    file_name="chat_history.txt",
+                    mime="text/plain",
+                    use_container_width=True
+                )
 
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
