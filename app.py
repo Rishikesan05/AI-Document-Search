@@ -172,7 +172,7 @@ st.markdown("""
 
     /* Buttons */
     .stButton > button,
-    .stDownloadButton > button {
+    [data-testid="stDownloadButton"] > button {
         border-radius: 50px !important;
         padding: 8px 16px !important;
         font-weight: 500 !important;
@@ -181,18 +181,19 @@ st.markdown("""
         cursor: pointer;
         min-height: 0 !important;
         line-height: 1.4 !important;
+        white-space: nowrap !important;
     }
 
     /* Secondary Buttons (Chips / Pills) */
     .stButton > button[data-testid="baseButton-secondary"],
-    .stDownloadButton > button {
+    [data-testid="stDownloadButton"] > button {
         background-color: var(--bg) !important;
         color: var(--text) !important;
         border: 0.8px solid var(--border) !important;
     }
 
     .stButton > button[data-testid="baseButton-secondary"]:hover,
-    .stDownloadButton > button:hover {
+    [data-testid="stDownloadButton"] > button:hover {
         border-color: var(--text) !important;
         background-color: var(--bg2) !important;
     }
@@ -521,14 +522,14 @@ if pdf_files:
         st.markdown("<br>", unsafe_allow_html=True)
         has_error = "failed_query" in st.session_state
         if has_error:
-            ctrl_cols = st.columns([1.5, 1.5, 1.5, 5.5])
+            ctrl_cols = st.columns([2.5, 2.5, 2.5, 2.5])
         else:
-            ctrl_cols = st.columns([1.5, 1.5, 7])
+            ctrl_cols = st.columns([2.5, 2.5, 5])
             
         col_idx = 0
         if has_error:
             with ctrl_cols[col_idx]:
-                if st.button("↻ Retry", key="retry_btn"):
+                if st.button("↻ Retry", key="retry_btn", use_container_width=True):
                     st.session_state.retry_query = st.session_state.failed_query
                     del st.session_state.failed_query
                     st.rerun()
@@ -543,12 +544,13 @@ if pdf_files:
                 label="⤓ Export Chat",
                 data=chat_export if chat_export else "No messages.",
                 file_name="chat_history.txt",
-                mime="text/plain"
+                mime="text/plain",
+                use_container_width=True
             )
         col_idx += 1
             
         with ctrl_cols[col_idx]:
-            if st.button("🗑 Clear Chat"):
+            if st.button("🗑 Clear Chat", use_container_width=True):
                 st.session_state.messages = []
                 if "failed_query" in st.session_state:
                     del st.session_state.failed_query
