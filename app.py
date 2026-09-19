@@ -476,9 +476,10 @@ if not st.session_state.messages:
 
 st.markdown("<br>", unsafe_allow_html=True)
 pdf_files = st.file_uploader(
-    "",
+    "Upload PDF documents",
     type=["pdf"],
-    accept_multiple_files=True
+    accept_multiple_files=True,
+    label_visibility="collapsed"
 )
 
 if pdf_files:
@@ -492,13 +493,13 @@ if pdf_files:
     if not st.session_state.messages:
         cols = st.columns(3)
         with cols[0]:
-            if st.button("Summarize Key Points", icon=":material/format_list_bulleted:", use_container_width=True):
+            if st.button("Summarize Key Points", use_container_width=True):
                 st.session_state.quick_query = "Summarize the key points of the uploaded documents."
         with cols[1]:
-            if st.button("Extract Action Items", icon=":material/task_alt:", use_container_width=True):
+            if st.button("Extract Action Items", use_container_width=True):
                 st.session_state.quick_query = "Extract the main action items or tasks mentioned in the documents."
         with cols[2]:
-            if st.button("Find Important Dates", icon=":material/calendar_today:", use_container_width=True):
+            if st.button("Find Important Dates", use_container_width=True):
                 st.session_state.quick_query = "List any important dates, deadlines, or schedules mentioned."
 
     # ── Chat Controls ──
@@ -506,7 +507,7 @@ if pdf_files:
         _, opt_col = st.columns([8, 2])
         with opt_col:
             with st.popover("Options", use_container_width=True):
-                if st.button("Clear Chat", icon=":material/delete:", use_container_width=True):
+                if st.button("Clear Chat", use_container_width=True):
                     st.session_state.messages = []
                     st.rerun()
                 
@@ -516,7 +517,6 @@ if pdf_files:
                     chat_export += f"{role}: {m['content']}\n\n"
                 st.download_button(
                     label="Export Chat",
-                    icon=":material/download:",
                     data=chat_export,
                     file_name="chat_history.txt",
                     mime="text/plain",
@@ -534,7 +534,7 @@ if pdf_files:
         else:
             st.error(f"**Error generating response:** {error_msg}")
             
-        if st.button("Retry", icon=":material/refresh:", key="retry_btn"):
+        if st.button("Retry", key="retry_btn"):
             st.session_state.retry_query = st.session_state.failed_query
             del st.session_state.failed_query
             st.rerun()
