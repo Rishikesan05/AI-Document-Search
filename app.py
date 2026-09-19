@@ -171,7 +171,8 @@ st.markdown("""
     }
 
     /* Buttons */
-    .stButton > button {
+    .stButton > button,
+    .stDownloadButton > button {
         border-radius: 50px !important;
         padding: 8px 16px !important;
         font-weight: 500 !important;
@@ -183,13 +184,15 @@ st.markdown("""
     }
 
     /* Secondary Buttons (Chips / Pills) */
-    .stButton > button[data-testid="baseButton-secondary"] {
+    .stButton > button[data-testid="baseButton-secondary"],
+    .stDownloadButton > button {
         background-color: var(--bg) !important;
         color: var(--text) !important;
         border: 0.8px solid var(--border) !important;
     }
 
-    .stButton > button[data-testid="baseButton-secondary"]:hover {
+    .stButton > button[data-testid="baseButton-secondary"]:hover,
+    .stDownloadButton > button:hover {
         border-color: var(--text) !important;
         background-color: var(--bg2) !important;
     }
