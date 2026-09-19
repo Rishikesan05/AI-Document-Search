@@ -174,7 +174,7 @@ st.markdown("""
     .stButton > button,
     [data-testid="stDownloadButton"] > button {
         border-radius: 50px !important;
-        padding: 8px 16px !important;
+        padding: 6px 14px !important;
         font-weight: 500 !important;
         font-size: 12px !important;
         transition: all 0.2s ease;
@@ -189,7 +189,7 @@ st.markdown("""
     [data-testid="stDownloadButton"] > button {
         background-color: var(--bg) !important;
         color: var(--text) !important;
-        border: 0.8px solid var(--border) !important;
+        border: 1px solid var(--border) !important;
     }
 
     .stButton > button[data-testid="baseButton-secondary"]:hover,
