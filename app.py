@@ -502,29 +502,6 @@ if pdf_files:
             if st.button("◷  Find Important Dates", use_container_width=True):
                 st.session_state.quick_query = "List any important dates, deadlines, or schedules mentioned."
 
-    # ── Chat Controls ──
-    if st.session_state.messages:
-        chat_export = ""
-        for m in st.session_state.messages:
-            role = "User" if m["role"] == "user" else "AI"
-            chat_export += f"{role}: {m['content']}\n\n"
-        
-        ctrl_cols = st.columns([1, 1, 6])
-        with ctrl_cols[0]:
-            if st.button("Clear Chat", use_container_width=True):
-                st.session_state.messages = []
-                if "failed_query" in st.session_state:
-                    del st.session_state.failed_query
-                st.rerun()
-        with ctrl_cols[1]:
-            st.download_button(
-                label="Export Chat",
-                data=chat_export,
-                file_name="chat_history.txt",
-                mime="text/plain",
-                use_container_width=True
-            )
-
     for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
@@ -535,11 +512,45 @@ if pdf_files:
             st.error("**Rate Limit Exceeded:** Please wait 30 seconds and try again.")
         else:
             st.error(f"**Error generating response:** {error_msg}")
+
+    # ── Action Controls (Bottom of chat) ──
+    if st.session_state.messages or "failed_query" in st.session_state:
+        st.markdown("<br>", unsafe_allow_html=True)
+        has_error = "failed_query" in st.session_state
+        if has_error:
+            ctrl_cols = st.columns([1.5, 1.5, 1.5, 5.5])
+        else:
+            ctrl_cols = st.columns([1.5, 1.5, 7])
             
-        if st.button("Retry", key="retry_btn"):
-            st.session_state.retry_query = st.session_state.failed_query
-            del st.session_state.failed_query
-            st.rerun()
+        col_idx = 0
+        if has_error:
+            with ctrl_cols[col_idx]:
+                if st.button("↻ Retry", key="retry_btn", use_container_width=True):
+                    st.session_state.retry_query = st.session_state.failed_query
+                    del st.session_state.failed_query
+                    st.rerun()
+            col_idx += 1
+            
+        with ctrl_cols[col_idx]:
+            chat_export = ""
+            for m in st.session_state.messages:
+                role = "User" if m["role"] == "user" else "AI"
+                chat_export += f"{role}: {m['content']}\n\n"
+            st.download_button(
+                label="⤓ Export Chat",
+                data=chat_export if chat_export else "No messages.",
+                file_name="chat_history.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
+        col_idx += 1
+            
+        with ctrl_cols[col_idx]:
+            if st.button("🗑 Clear Chat", use_container_width=True):
+                st.session_state.messages = []
+                if "failed_query" in st.session_state:
+                    del st.session_state.failed_query
+                st.rerun()
 
     user_query = st.chat_input("Ask a question about your documents...")
     
