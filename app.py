@@ -600,9 +600,6 @@ if pdf_files:
                 st.rerun()
 
 else:
-    pass
-
-if not st.session_state.messages:
     st.markdown("""
     <div class="features">
         <div class="feat">
