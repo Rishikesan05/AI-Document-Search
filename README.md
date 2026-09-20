@@ -11,6 +11,10 @@ A production-grade, privacy-first **Document Intelligence & Conversational RAG (
 
 On every query, the agent performs sub-second vector similarity retrieval to supply grounded source chunks directly into the prompt context. It generates factual, hallucination-free answers via real-time token streaming with **Google Gemini 3.5 Flash**, accompanied by full source verification, latency performance metrics, 1-click quick analysis prompts, and a bespoke Studio Minimalist design system inspired by [rishiware.com](https://rishiware.com/).
 
+<p align="center">
+  <img src="assets/demo.png" alt="AI Document Search UI Preview" width="100%" />
+</p>
+
 ---
 
 ## 🏗️ Architecture Overview
